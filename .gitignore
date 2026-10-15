@@ -1,0 +1,42 @@
+node_modules/
+dist/
+build/
+.cache/
+.env*
+.vite/
+vite.config.*.timestamp-*
+*.tsbuildinfo
+*-debug.log*
+logs/
+*.log
+.claude-replay.*
+.tmp-*
+/.figma/
+
+# IDE & Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+.mise.toml
+
+# AI Agent skills, rules, workflows & knowledge graph
+.agents/
+.plugins/
+.opencode-skills/
+.superpowers/
+.skills/
+skills/
+graphify-out/
+
+# Next.js
+.next/
+out/
+
+# Documentation
+docs/superpowers/
+doc/superpower/
+AGENTS.md
+CLAUDE.md

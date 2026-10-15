@@ -1,0 +1,16 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="201.936" height="289.535" viewBox="0 0 201.936 289.535" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+  .logo-text {
+    font-family: 'Space Grotesk', 'Work Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-weight: 900;
+    font-size: 96px;
+    letter-spacing: 0.05em;
+    fill: #000000;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+</style>
+<g id="Group">
+  <text x="100.968" y="144.767" transform="rotate(90, 100.968, 144.767)" class="logo-text">HYUN</text>
+</g>
+</svg>

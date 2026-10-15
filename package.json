@@ -1,0 +1,35 @@
+{
+  "name": "minkura-nextjs",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "format": "oxfmt",
+    "db:migrate": "node scripts/migrate.js",
+    "r2:sync": "node scripts/sync-images-to-r2.js",
+    "graphify": "python -m graphify . --code-only",
+    "graphify:update": "python -m graphify update .",
+    "graphify:cluster": "python -m graphify cluster-only . --no-label"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1168.0",
+    "@supabase/supabase-js": "^2.119.0",
+    "leaflet": "^1.9.4",
+    "next": "^15.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0",
+    "@types/leaflet": "^1.9.22",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "oxfmt": "^0.2.0",
+    "postcss": "^8.5.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.0"
+  }
+}

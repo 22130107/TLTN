@@ -1,0 +1,260 @@
+@import "tailwindcss";
+@font-face {
+  font-family: 'Inter:Bold';
+  src: url('https://static.figma.com/font/Inter_1') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter:Regular';
+  src: url('https://static.figma.com/font/Inter_1') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans JP:Bold';
+  src: url('https://static.figma.com/font/NotoSansJP-VF_2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans Math:Regular';
+  src: url('https://static.figma.com/font/NotoSansMath-Regular_1') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans Symbols2:Regular';
+  src: url('https://static.figma.com/font/NotoSansSymbols2-Regular_5') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans Symbols:Bold';
+  src: url('https://static.figma.com/font/NotoSansSymbols-VF_2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans:Bold';
+  src: url('https://static.figma.com/font/NotoSans-VF_3') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Space Grotesk:Light';
+  src: url('https://static.figma.com/font/SpaceGrotesk_wght__1') format('woff2');
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Work Sans:Medium';
+  src: url('https://static.figma.com/font/WorkSans_wght__2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Work Sans:SemiBold';
+  src: url('https://static.figma.com/font/WorkSans_wght__2') format('woff2');
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  width: 100%;
+}
+
+body {
+  background: #fff;
+  color: #222;
+  overflow-x: hidden;
+}
+
+.design-stage {
+  min-height: 100dvh;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.design-canvas {
+  left: 50%;
+  position: absolute;
+  top: 0;
+  transform-origin: top center;
+  translate: -50% 0;
+}
+
+@keyframes menuCardPop {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes menuPushIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-menu-card {
+  animation: menuCardPop 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-menu-push-1 {
+  animation: menuPushIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.05s backwards;
+}
+
+.animate-menu-push-2 {
+  animation: menuPushIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.12s backwards;
+}
+
+.animate-menu-push-3 {
+  animation: menuPushIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.19s backwards;
+}
+
+/* Hero Central Slider - Ultra-smooth Slide Transitions */
+@keyframes heroSlideInRight {
+  from {
+    transform: translate3d(100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes heroSlideOutLeft {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+@keyframes heroSlideInLeft {
+  from {
+    transform: translate3d(-100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes heroSlideOutRight {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+.hero-slide-in-right {
+  animation: heroSlideInRight 0.65s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  will-change: transform;
+}
+
+.hero-slide-out-left {
+  animation: heroSlideOutLeft 0.65s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  will-change: transform;
+}
+
+.hero-slide-in-left {
+  animation: heroSlideInLeft 0.65s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  will-change: transform;
+}
+
+.hero-slide-out-right {
+  animation: heroSlideOutRight 0.65s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  will-change: transform;
+}
+
+/* Infinite Marquee Running Text / Chữ chạy */
+@keyframes marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 25s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Custom Sleek Scrollbar for Chat & Dark Containers */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
