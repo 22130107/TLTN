@@ -121,7 +121,7 @@ export async function getPendingOutgoingRequests(
 export async function sendCoupleRequest(
   senderId: string,
   target: string,
-): Promise<{ success: boolean error?: string request?: CoupleRequest }> {
+): Promise<{ success: boolean; error?: string; request?: CoupleRequest }> {
   try {
     const trimmedTarget = target.trim()
     if (!trimmedTarget) {
@@ -159,7 +159,7 @@ export async function sendCoupleRequest(
 export async function acceptCoupleRequest(
   requestId: string,
   currentUserId: string,
-): Promise<{ success: boolean couple?: Couple error?: string }> {
+): Promise<{ success: boolean; couple?: Couple; error?: string }> {
   try {
     const res = await fetch("/api/couple/accept", {
       method: "POST",
@@ -192,7 +192,7 @@ export async function acceptCoupleRequest(
 export async function rejectCoupleRequest(
   requestId: string,
   currentUserId: string,
-): Promise<{ success: boolean error?: string }> {
+): Promise<{ success: boolean; error?: string }> {
   try {
     const res = await fetch("/api/couple/reject", {
       method: "POST",
@@ -219,7 +219,7 @@ export async function rejectCoupleRequest(
 export async function cancelCoupleRequest(
   requestId: string,
   currentUserId: string,
-): Promise<{ success: boolean error?: string }> {
+): Promise<{ success: boolean; error?: string }> {
   try {
     const res = await fetch("/api/couple/cancel", {
       method: "POST",
@@ -245,7 +245,7 @@ export async function cancelCoupleRequest(
 export async function unpairCouple(
   coupleId: string,
   currentUserId: string,
-): Promise<{ success: boolean error?: string }> {
+): Promise<{ success: boolean; error?: string }> {
   try {
     const res = await fetch("/api/couple/unpair", {
       method: "POST",
@@ -272,7 +272,7 @@ export async function updateAnniversaryDate(
   coupleId: string,
   currentUserId: string,
   newDate: string,
-): Promise<{ success: boolean error?: string }> {
+): Promise<{ success: boolean; error?: string }> {
   try {
     const res = await fetch("/api/couple/anniversary", {
       method: "POST",
@@ -325,7 +325,7 @@ export async function sendCoupleMessageHttp(
   senderId: string,
   text: string,
   type: "text" | "heart" = "text",
-): Promise<{ success: boolean message?: CoupleMessage error?: string }> {
+): Promise<{ success: boolean; message?: CoupleMessage; error?: string }> {
   try {
     const res = await fetch("/api/couple/message", {
       method: "POST",

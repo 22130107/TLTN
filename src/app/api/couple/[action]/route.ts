@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { NextRequest, NextResponse } from "next/server"
 import { supabase } from "@/lib/supabase/client"
 
@@ -96,7 +98,7 @@ async function forwardToWorker(
   path: string,
   method: "GET" | "POST",
   body?: unknown,
-): Promise<{ ok: boolean status: number data: any }> {
+): Promise<{ ok: boolean; status: number; data: any }> {
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 1800)
@@ -121,10 +123,10 @@ async function forwardToWorker(
 
 export async function GET(
   req: NextRequest,
-  context: { params: Promise<{ action: string[] }> },
+  context: { params: Promise<{ action: string }> },
 ) {
   const { action } = await context.params
-  const endpoint = action?.[0]
+  const endpoint = action
   const { searchParams } = new URL(req.url)
 
   // 1. GET /api/couple/status?userId=<id>
@@ -249,10 +251,10 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  context: { params: Promise<{ action: string[] }> },
+  context: { params: Promise<{ action: string }> },
 ) {
   const { action } = await context.params
-  const endpoint = action?.[0]
+  const endpoint = action
 
   let body: any = {}
   try {
