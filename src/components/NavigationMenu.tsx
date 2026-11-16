@@ -7,6 +7,7 @@
 import { useState, useEffect, useRef, type ReactNode } from "react"
 
 import Link from "next/link"
+import { openChatBox } from "@/utils/chatBoxEvents"
 
 interface MenuItem {
   id: string
@@ -211,34 +212,54 @@ export default function NavigationMenu() {
 
                 return (
                   <li key={item.id} className={pushClass}>
-                    <Link
-                      href={item.href}
-                      onClick={() => {
-                        setActiveItem(item.id)
-
-                        setIsOpen(false)
-                      }}
-                      className="group flex items-center gap-3.5 text-[18px] font-['Inter:Bold','Inter',sans-serif] font-bold tracking-[0.3px] transition-all duration-200 text-white/90 hover:text-white hover:translate-x-2 active:scale-95"
-                    >
-                      {}
-                      <span
-                        className={`size-[5px] shrink-0 rounded-full bg-white transition-all duration-200 ${
-                          isActive
-                            ? "opacity-100 scale-100"
-                            : "opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100"
-                        }`}
-                      />
-
-                      {}
-                      <span className="text-white/80 transition-all duration-200 group-hover:text-white group-hover:scale-110">
-                        {item.icon}
-                      </span>
-
-                      {}
-                      <span className="transition-transform duration-200">
-                        {item.label}
-                      </span>
-                    </Link>
+                    {item.id === "couple" ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveItem(item.id)
+                          setIsOpen(false)
+                          openChatBox("couple")
+                        }}
+                        className="group flex w-full items-center gap-3.5 text-[18px] font-['Inter:Bold','Inter',sans-serif] font-bold tracking-[0.3px] transition-all duration-200 text-white/90 hover:text-white hover:translate-x-2 active:scale-95 cursor-pointer text-left"
+                      >
+                        <span
+                          className={`size-[5px] shrink-0 rounded-full bg-white transition-all duration-200 ${
+                            isActive
+                              ? "opacity-100 scale-100"
+                              : "opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100"
+                          }`}
+                        />
+                        <span className="text-white/80 transition-all duration-200 group-hover:text-white group-hover:scale-110">
+                          {item.icon}
+                        </span>
+                        <span className="transition-transform duration-200">
+                          {item.label}
+                        </span>
+                      </button>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        onClick={() => {
+                          setActiveItem(item.id)
+                          setIsOpen(false)
+                        }}
+                        className="group flex items-center gap-3.5 text-[18px] font-['Inter:Bold','Inter',sans-serif] font-bold tracking-[0.3px] transition-all duration-200 text-white/90 hover:text-white hover:translate-x-2 active:scale-95"
+                      >
+                        <span
+                          className={`size-[5px] shrink-0 rounded-full bg-white transition-all duration-200 ${
+                            isActive
+                              ? "opacity-100 scale-100"
+                              : "opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100"
+                          }`}
+                        />
+                        <span className="text-white/80 transition-all duration-200 group-hover:text-white group-hover:scale-110">
+                          {item.icon}
+                        </span>
+                        <span className="transition-transform duration-200">
+                          {item.label}
+                        </span>
+                      </Link>
+                    )}
                   </li>
                 )
               })}
