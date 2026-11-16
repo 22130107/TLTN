@@ -7,6 +7,7 @@
 import { useState, useEffect, useRef, type ReactNode } from "react"
 
 import Link from "next/link"
+
 import { openChatBox } from "@/utils/chatBoxEvents"
 
 interface MenuItem {
@@ -73,7 +74,7 @@ const MENU_ITEMS: MenuItem[] = [
 
     label: "Cặp đôi & Chat",
 
-    href: "/couple",
+    href: "/?openChat=couple",
 
     icon: (
       <svg
@@ -217,7 +218,9 @@ export default function NavigationMenu() {
                         type="button"
                         onClick={() => {
                           setActiveItem(item.id)
+
                           setIsOpen(false)
+
                           openChatBox("couple")
                         }}
                         className="group flex w-full items-center gap-3.5 text-[18px] font-['Inter:Bold','Inter',sans-serif] font-bold tracking-[0.3px] transition-all duration-200 text-white/90 hover:text-white hover:translate-x-2 active:scale-95 cursor-pointer text-left"
@@ -241,6 +244,7 @@ export default function NavigationMenu() {
                         href={item.href}
                         onClick={() => {
                           setActiveItem(item.id)
+
                           setIsOpen(false)
                         }}
                         className="group flex items-center gap-3.5 text-[18px] font-['Inter:Bold','Inter',sans-serif] font-bold tracking-[0.3px] transition-all duration-200 text-white/90 hover:text-white hover:translate-x-2 active:scale-95"

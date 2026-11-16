@@ -1,5 +1,42 @@
 "use client"
 
+// WebSocket Chat Client
+
+// Local state
+
+// Scroll to bottom on new message
+
+// Copy User ID
+
+// Send couple invite
+
+// Handle typing indicator
+
+// Send message
+
+// Handle unpair
+
+// Handle update anniversary date
+
+// Format message timestamp
+
+// Calculate days together safely
+
+// 1. STATE: Not Logged In
+
+// 2. STATE: Loading
+
+// 3. STATE: Logged in, but NOT PAIRED (Pairing Dashboard inside ChatBox)
+/* Your Connection Code */ /* Send Invite Form */ /* Incoming Requests */ /* Outgoing Requests */
+
+// 4. STATE: PAIRED (Real-time Couple Chat Area)
+/* Flying Hearts Animation Overlay */ /* Couple Status Bar */ /* Days Together Pill */ /* Settings Toggle */ /* Settings Overlay Drawer */ /* Unpair Confirmation Dialog */ /* Messages List Area */
+
+// Heart like message
+
+// Normal text message
+/* Partner Typing Dots */ /* Couple Chat Input Form */
+
 import { useState, useRef, useEffect } from "react"
 import { useAuth } from "@/contexts/AuthContext"
 import { useCouple } from "@/hooks/useCouple"
@@ -20,8 +57,6 @@ export default function CoupleChatTab() {
     unpair,
     updateAnniversary,
   } = useCouple()
-
-  // WebSocket Chat Client
   const {
     messages,
     partnerOnline,
@@ -31,8 +66,6 @@ export default function CoupleChatTab() {
     sendTyping,
     sendHeart,
   } = useCoupleChat(couple?.id, user?.id)
-
-  // Local state
   const [inputText, setInputText] = useState("")
   const [partnerIdInput, setPartnerIdInput] = useState("")
   const [inviteStatus, setInviteStatus] = useState<{
@@ -44,7 +77,8 @@ export default function CoupleChatTab() {
   const [showUnpairConfirm, setShowUnpairConfirm] = useState(false)
   const [isUnpairing, setIsUnpairing] = useState(false)
   const [anniversaryDate, setAnniversaryDate] = useState(
-    couple?.anniversary_date || new Date().toISOString().split("T")[0]
+    couple?.anniversary_date ||
+      new Date().toISOString().split("T")[0],
   )
   const [isUpdatingDate, setIsUpdatingDate] = useState(false)
 
@@ -56,21 +90,15 @@ export default function CoupleChatTab() {
       setAnniversaryDate(couple.anniversary_date)
     }
   }, [couple?.anniversary_date])
-
-  // Scroll to bottom on new message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages, partnerTyping])
-
-  // Copy User ID
   const handleCopyId = () => {
     if (!user?.id) return
     navigator.clipboard.writeText(user.id)
     setCopiedId(true)
     setTimeout(() => setCopiedId(false), 2000)
   }
-
-  // Send couple invite
   const handleSendInvite = async (e: React.FormEvent) => {
     e.preventDefault()
     const targetId = partnerIdInput.trim()
@@ -88,13 +116,15 @@ export default function CoupleChatTab() {
     } catch (err) {
       setInviteStatus({
         type: "error",
-        message: err instanceof Error ? err.message : "Gửi lời mời thất bại",
+        message:
+          err instanceof
+          Error
+            ? err.message
+            : "Gửi lời mời thất bại",
       })
       setTimeout(() => setInviteStatus({ type: "idle" }), 4000)
     }
   }
-
-  // Handle typing indicator
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value
     setInputText(val)
@@ -105,8 +135,6 @@ export default function CoupleChatTab() {
       sendTyping(false)
     }, 2000)
   }
-
-  // Send message
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault()
     if (!inputText.trim()) return
@@ -115,8 +143,6 @@ export default function CoupleChatTab() {
     setInputText("")
     sendTyping(false)
   }
-
-  // Handle unpair
   const handleConfirmUnpair = async () => {
     try {
       setIsUnpairing(true)
@@ -129,8 +155,6 @@ export default function CoupleChatTab() {
       setIsUnpairing(false)
     }
   }
-
-  // Handle update anniversary date
   const handleSaveAnniversary = async () => {
     if (!anniversaryDate) return
     try {
@@ -143,29 +167,24 @@ export default function CoupleChatTab() {
       setIsUpdatingDate(false)
     }
   }
-
-  // Format message timestamp
   const formatTime = (ts: number | string) => {
     try {
       const d = new Date(ts)
-      return d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })
+      return d.toLocaleTimeString("vi-VN", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
     } catch {
       return ""
     }
   }
-
-  // Calculate days together
-  const daysTogether = couple?.anniversary_date
-    ? Math.max(
-        1,
-        Math.floor(
-          (Date.now() - new Date(couple.anniversary_date).getTime()) /
-            (1000 * 60 * 60 * 24)
-        )
-      )
-    : 1
-
-  // 1. STATE: Not Logged In
+  const daysTogether = (() => {
+    if (!couple?.anniversary_date) return 1
+    const ts = new Date(couple.anniversary_date).getTime()
+    if (isNaN(ts)) return 1
+    const diff = Math.floor((Date.now() - ts) / (1000 * 60 * 60 * 24))
+    return Math.max(1, diff)
+  })()
   if (!user) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center p-6 text-center bg-[#161616]">
@@ -174,7 +193,8 @@ export default function CoupleChatTab() {
         </div>
         <h4 className="font-bold text-white text-[15px]">Không gian Cặp đôi</h4>
         <p className="text-[12px] text-white/60 mt-1.5 leading-relaxed max-w-[270px]">
-          Đăng nhập tài khoản để nhận mã kết nối, gửi lời mời người thương và chat thời gian thực.
+          Đăng nhập tài khoản để nhận mã kết nối, gửi lời mời người thương và
+          chat thời gian thực.
         </p>
         <button
           type="button"
@@ -186,8 +206,6 @@ export default function CoupleChatTab() {
       </div>
     )
   }
-
-  // 2. STATE: Loading
   if (isCoupleLoading) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center p-6 text-center bg-[#161616]">
@@ -198,36 +216,44 @@ export default function CoupleChatTab() {
       </div>
     )
   }
-
-  // 3. STATE: Logged in, but NOT PAIRED (Pairing Dashboard inside ChatBox)
   if (!couple) {
     return (
       <div className="flex flex-1 flex-col overflow-y-auto custom-scrollbar p-3.5 space-y-3.5 bg-[#161616] text-white text-xs">
-        {/* Your Connection Code */}
+        {}
         <div className="rounded-xl bg-[#222222] border border-white/10 p-3 shadow-xs">
           <span className="text-[11px] font-semibold text-white/60 uppercase tracking-wider block mb-1">
             Mã kết nối của bạn
           </span>
           <div className="flex items-center gap-1.5 bg-[#181818] border border-white/5 rounded-lg p-1.5">
-            <span className="font-mono text-[11.5px] text-[#ff4b72] flex-1 truncate px-1">
-              {user.id}
+            <span
+              className="font-mono text-[11.5px] text-[#ff4b72] flex-1 truncate px-1"
+              title={user.id}
+            >
+              {user.email ||
+                user.id}
             </span>
             <button
               type="button"
               onClick={handleCopyId}
               className="px-2.5 py-1 rounded bg-white/10 hover:bg-white/20 active:scale-95 text-[11px] font-medium text-white transition-all cursor-pointer shrink-0"
             >
-              {copiedId ? "✓ Đã chép" : "Sao chép"}
+              {copiedId ? "✓ Đã chép" : "Sao chép ID"}
             </button>
           </div>
           <span className="text-[10.5px] text-white/40 block mt-1.5 leading-tight">
-            Gửi mã này cho đối phương để kết nối cùng nhau.
+            Gửi User ID hoặc Email này cho đối phương để kết nối cùng nhau.
           </span>
         </div>
 
-        {/* Send Invite Form */}
-        <form onSubmit={handleSendInvite} className="rounded-xl bg-[#222222] border border-white/10 p-3 shadow-xs">
-          <label htmlFor="partner-id-input" className="text-[11px] font-semibold text-white/60 uppercase tracking-wider block mb-1.5">
+        {}
+        <form
+          onSubmit={handleSendInvite}
+          className="rounded-xl bg-[#222222] border border-white/10 p-3 shadow-xs"
+        >
+          <label
+            htmlFor="partner-id-input"
+            className="text-[11px] font-semibold text-white/60 uppercase tracking-wider block mb-1.5"
+          >
             Kết nối người thương
           </label>
           <div className="flex flex-col gap-2">
@@ -236,22 +262,30 @@ export default function CoupleChatTab() {
               type="text"
               value={partnerIdInput}
               onChange={(e) => setPartnerIdInput(e.target.value)}
-              placeholder="Nhập User ID của đối phương..."
+              placeholder="Nhập User ID hoặc Email của đối phương..."
               className="w-full bg-[#181818] border border-white/10 rounded-lg px-2.5 py-1.5 text-[12px] text-white placeholder:text-white/30 focus:outline-none focus:border-[#ff4b72]/60"
             />
             <button
               type="submit"
-              disabled={inviteStatus.type === "loading" || !partnerIdInput.trim()}
+              disabled={
+                inviteStatus.type ===
+                  "loading" ||
+                !partnerIdInput.trim()
+              }
               className="w-full py-2 rounded-lg bg-gradient-to-r from-[#ff4b72] to-[#e63956] text-white font-bold text-[12px] shadow-sm hover:opacity-90 active:scale-98 transition-all disabled:opacity-50 cursor-pointer"
             >
-              {inviteStatus.type === "loading" ? "Đang gửi..." : "Gửi lời mời kết nối ❤️"}
+              {inviteStatus.type ===
+              "loading"
+                ? "Đang gửi..."
+                : "Gửi lời mời kết nối ❤️"}
             </button>
           </div>
 
           {inviteStatus.message && (
             <div
               className={`mt-2 p-2 rounded-lg text-[11px] leading-tight ${
-                inviteStatus.type === "error"
+                inviteStatus.type ===
+                "error"
                   ? "bg-red-500/20 text-red-300 border border-red-500/30"
                   : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
               }`}
@@ -261,8 +295,9 @@ export default function CoupleChatTab() {
           )}
         </form>
 
-        {/* Incoming Requests */}
-        {incomingRequests.length > 0 && (
+        {}
+        {incomingRequests.length >
+          0 && (
           <div className="rounded-xl bg-[#222222] border border-[#ff4b72]/30 p-3 shadow-xs">
             <span className="text-[11px] font-bold text-[#ff4b72] block mb-2">
               💌 Lời mời nhận được ({incomingRequests.length})
@@ -275,10 +310,12 @@ export default function CoupleChatTab() {
                 >
                   <div className="flex items-center gap-2">
                     <div className="size-6 rounded-full bg-white/10 flex items-center justify-center font-bold text-[10px] text-white">
-                      {(req.sender_profile?.display_name || "U")[0].toUpperCase()}
+                      {(req.sender_profile?.display_name ||
+                        "U")[0].toUpperCase()}
                     </div>
                     <span className="font-semibold text-white text-[12px] truncate">
-                      {req.sender_profile?.display_name || "Người dùng"}
+                      {req.sender_profile?.display_name ||
+                        "Người dùng"}
                     </span>
                   </div>
                   <div className="flex gap-1.5 mt-0.5">
@@ -303,8 +340,9 @@ export default function CoupleChatTab() {
           </div>
         )}
 
-        {/* Outgoing Requests */}
-        {outgoingRequests.length > 0 && (
+        {}
+        {outgoingRequests.length >
+          0 && (
           <div className="rounded-xl bg-[#222222] border border-white/10 p-3 shadow-xs">
             <span className="text-[11px] font-semibold text-white/60 block mb-2">
               ⏳ Lời mời đã gửi ({outgoingRequests.length})
@@ -333,17 +371,19 @@ export default function CoupleChatTab() {
       </div>
     )
   }
-
-  // 4. STATE: PAIRED (Real-time Couple Chat Area)
-  const partnerName = couple.partner?.display_name || "Người thương"
-  const partnerAvatar = couple.partner?.avatar_url || "/img/profile-avatar.png"
+  const partnerName =
+    couple.partner?.display_name ||
+    "Người thương"
+  const partnerAvatar =
+    couple.partner?.avatar_url ||
+    "/img/profile-avatar.png"
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden relative bg-[#161616]">
-      {/* Flying Hearts Animation Overlay */}
+      {}
       <HeartAnimationOverlay triggerTimestamp={heartReceivedTimestamp} />
 
-      {/* Couple Status Bar */}
+      {}
       <div className="flex items-center justify-between px-3 py-2 bg-[#1e1e1e] border-b border-white/10">
         <div className="flex items-center gap-2">
           <div className="relative">
@@ -378,13 +418,13 @@ export default function CoupleChatTab() {
         </div>
 
         <div className="flex items-center gap-1.5">
-          {/* Days Together Pill */}
+          {}
           <div className="px-2.5 py-0.5 rounded-full bg-[#ff4b72]/15 border border-[#ff4b72]/30 text-[#ff4b72] text-[11px] font-bold flex items-center gap-1 shadow-inner">
             <span>❤️</span>
             <span>{daysTogether} ngày</span>
           </div>
 
-          {/* Settings Toggle */}
+          {}
           <button
             type="button"
             onClick={() => setShowSettings(!showSettings)}
@@ -407,11 +447,13 @@ export default function CoupleChatTab() {
         </div>
       </div>
 
-      {/* Settings Overlay Drawer */}
+      {}
       {showSettings && (
         <div className="absolute inset-x-0 top-[49px] z-20 bg-[#1c1c1c]/95 backdrop-blur-md border-b border-white/10 p-3.5 shadow-xl text-white text-xs animate-fade-in">
           <div className="flex items-center justify-between mb-2.5">
-            <span className="font-bold text-[12.5px] text-white">Quản lý cặp đôi</span>
+            <span className="font-bold text-[12.5px] text-white">
+              Quản lý cặp đôi
+            </span>
             <button
               type="button"
               onClick={() => setShowSettings(false)}
@@ -423,7 +465,10 @@ export default function CoupleChatTab() {
 
           <div className="space-y-3">
             <div>
-              <label htmlFor="anniversary-date-input" className="text-[11px] text-white/60 block mb-1">
+              <label
+                htmlFor="anniversary-date-input"
+                className="text-[11px] text-white/60 block mb-1"
+              >
                 Ngày bắt đầu yêu / kỷ niệm:
               </label>
               <div className="flex gap-1.5">
@@ -446,7 +491,9 @@ export default function CoupleChatTab() {
             </div>
 
             <div className="pt-2 border-t border-white/10 flex justify-between items-center">
-              <span className="text-[11px] text-white/50">Hủy liên kết tài khoản:</span>
+              <span className="text-[11px] text-white/50">
+                Hủy liên kết tài khoản:
+              </span>
               <button
                 type="button"
                 onClick={() => setShowUnpairConfirm(true)}
@@ -459,14 +506,17 @@ export default function CoupleChatTab() {
         </div>
       )}
 
-      {/* Unpair Confirmation Dialog */}
+      {}
       {showUnpairConfirm && (
         <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/80 p-4 backdrop-blur-xs">
           <div className="w-full max-w-[280px] rounded-2xl border border-white/15 bg-[#222222] p-4 text-center shadow-2xl">
             <span className="text-2xl block mb-1">💔</span>
-            <h5 className="font-bold text-white text-[13px]">Xác nhận hủy ghép đôi?</h5>
+            <h5 className="font-bold text-white text-[13px]">
+              Xác nhận hủy ghép đôi?
+            </h5>
             <p className="text-[11px] text-white/60 mt-1 leading-normal">
-              Bạn và <strong className="text-white">{partnerName}</strong> sẽ dừng kết nối phòng chat.
+              Bạn và <strong className="text-white">{partnerName}</strong> sẽ
+              dừng kết nối phòng chat.
             </p>
             <div className="flex gap-2 mt-3.5">
               <button
@@ -489,25 +539,33 @@ export default function CoupleChatTab() {
         </div>
       )}
 
-      {/* Messages List Area */}
+      {}
       <div className="flex-1 overflow-y-auto custom-scrollbar p-3.5 space-y-2.5 bg-[#161616]">
-        {messages.length === 0 ? (
+        {messages.length ===
+        0 ? (
           <div className="flex h-full flex-col items-center justify-center text-center p-4">
             <span className="text-3xl mb-2">💬</span>
             <p className="text-[12px] text-white/50 leading-relaxed">
-              Chưa có tin nhắn nào.<br />Hãy gửi lời nhắn hoặc thả tim đến {partnerName} nhé!
+              Chưa có tin nhắn nào.
+              <br />
+              Hãy gửi lời nhắn hoặc thả tim đến {partnerName} nhé!
             </p>
           </div>
         ) : (
           messages.map((m) => {
-            const isMe = m.sender_id === user.id
-
-            // Heart like message
-            if (m.type === "heart") {
+            const isMe =
+              m.sender_id ===
+              user.id
+            if (
+              m.type ===
+              "heart"
+            ) {
               return (
                 <div
                   key={m.id}
-                  className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}
+                  className={`flex flex-col ${
+                    isMe ? "items-end" : "items-start"
+                  }`}
                 >
                   <div className="text-[#ff4b72] p-1 animate-scale-up text-3xl">
                     ❤️
@@ -518,12 +576,12 @@ export default function CoupleChatTab() {
                 </div>
               )
             }
-
-            // Normal text message
             return (
               <div
                 key={m.id}
-                className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}
+                className={`flex flex-col ${
+                  isMe ? "items-end" : "items-start"
+                }`}
               >
                 <div
                   className={`max-w-[82%] px-3.5 py-2 rounded-[18px] text-[13px] leading-[1.45] shadow-xs break-words ${
@@ -542,7 +600,7 @@ export default function CoupleChatTab() {
           })
         )}
 
-        {/* Partner Typing Dots */}
+        {}
         {partnerTyping && (
           <div className="flex items-center gap-1.5 text-[11px] text-white/40 pt-1">
             <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#282828]">
@@ -562,7 +620,7 @@ export default function CoupleChatTab() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Couple Chat Input Form */}
+      {}
       <form
         onSubmit={handleSendMessage}
         className="flex items-center gap-1.5 px-3 py-2 bg-[#1e1e1e] border-t border-white/10"

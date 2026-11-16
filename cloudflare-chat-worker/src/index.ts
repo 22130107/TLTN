@@ -10,7 +10,12 @@ import {
   unpairCouple,
   updateAnniversary,
 } from "./db.ts"
-import type { Env, WsClientAction, CoupleMessage, ExecutionContext } from "./types.ts"
+import type {
+  Env,
+  WsClientAction,
+  CoupleMessage,
+  ExecutionContext,
+} from "./types.ts"
 
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -40,7 +45,10 @@ export default {
   async fetch(
     request: Request,
     env: Env = {},
-    ctx: ExecutionContext = { waitUntil: () => {}, passThroughOnException: () => {} }
+    ctx: ExecutionContext = {
+      waitUntil: () => {},
+      passThroughOnException: () => {},
+    },
   ): Promise<Response> {
     // CORS Preflight Options
     if (request.method === "OPTIONS") {
@@ -70,11 +78,17 @@ export default {
     // GET /api/couple/status?userId=<id>
     if (url.pathname === "/api/couple/status") {
       if (request.method !== "GET") {
-        return jsonResponse({ success: false, error: "Method not allowed" }, 405)
+        return jsonResponse(
+          { success: false, error: "Method not allowed" },
+          405,
+        )
       }
       const userId = url.searchParams.get("userId")
       if (!userId) {
-        return jsonResponse({ success: false, error: "userId parameter is required" }, 400)
+        return jsonResponse(
+          { success: false, error: "userId parameter is required" },
+          400,
+        )
       }
       const status = await getCoupleStatus(env.CHAT_DB, userId)
       return jsonResponse({
@@ -86,16 +100,21 @@ export default {
     // POST /api/couple/request
     if (url.pathname === "/api/couple/request") {
       if (request.method !== "POST") {
-        return jsonResponse({ success: false, error: "Method not allowed" }, 405)
+        return jsonResponse(
+          { success: false, error: "Method not allowed" },
+          405,
+        )
       }
-      const body = await parseBody<{ senderId?: string; receiverId?: string }>(request)
+      const body = await parseBody<{ senderId?: string receiverId?: string }>(
+        request,
+      )
       if (!body) {
         return jsonResponse({ success: false, error: "Invalid JSON body" }, 400)
       }
       const result = await createCoupleRequest(
         env.CHAT_DB,
         body.senderId || "",
-        body.receiverId || ""
+        body.receiverId || "",
       )
       return jsonResponse(result, result.success ? 200 : 400)
     }
@@ -103,16 +122,21 @@ export default {
     // POST /api/couple/accept
     if (url.pathname === "/api/couple/accept") {
       if (request.method !== "POST") {
-        return jsonResponse({ success: false, error: "Method not allowed" }, 405)
+        return jsonResponse(
+          { success: false, error: "Method not allowed" },
+          405,
+        )
       }
-      const body = await parseBody<{ requestId?: string; userId?: string }>(request)
+      const body = await parseBody<{ requestId?: string userId?: string }>(
+        request,
+      )
       if (!body) {
         return jsonResponse({ success: false, error: "Invalid JSON body" }, 400)
       }
       const result = await acceptCoupleRequest(
         env.CHAT_DB,
         body.requestId || "",
-        body.userId || ""
+        body.userId || "",
       )
       return jsonResponse(result, result.success ? 200 : 400)
     }
@@ -120,16 +144,21 @@ export default {
     // POST /api/couple/reject
     if (url.pathname === "/api/couple/reject") {
       if (request.method !== "POST") {
-        return jsonResponse({ success: false, error: "Method not allowed" }, 405)
+        return jsonResponse(
+          { success: false, error: "Method not allowed" },
+          405,
+        )
       }
-      const body = await parseBody<{ requestId?: string; userId?: string }>(request)
+      const body = await parseBody<{ requestId?: string userId?: string }>(
+        request,
+      )
       if (!body) {
         return jsonResponse({ success: false, error: "Invalid JSON body" }, 400)
       }
       const result = await rejectCoupleRequest(
         env.CHAT_DB,
         body.requestId || "",
-        body.userId || ""
+        body.userId || "",
       )
       return jsonResponse(result, result.success ? 200 : 400)
     }
@@ -137,16 +166,21 @@ export default {
     // POST /api/couple/cancel
     if (url.pathname === "/api/couple/cancel") {
       if (request.method !== "POST") {
-        return jsonResponse({ success: false, error: "Method not allowed" }, 405)
+        return jsonResponse(
+          { success: false, error: "Method not allowed" },
+          405,
+        )
       }
-      const body = await parseBody<{ requestId?: string; userId?: string }>(request)
+      const body = await parseBody<{ requestId?: string userId?: string }>(
+        request,
+      )
       if (!body) {
         return jsonResponse({ success: false, error: "Invalid JSON body" }, 400)
       }
       const result = await cancelCoupleRequest(
         env.CHAT_DB,
         body.requestId || "",
-        body.userId || ""
+        body.userId || "",
       )
       return jsonResponse(result, result.success ? 200 : 400)
     }
@@ -154,16 +188,21 @@ export default {
     // POST /api/couple/unpair
     if (url.pathname === "/api/couple/unpair") {
       if (request.method !== "POST") {
-        return jsonResponse({ success: false, error: "Method not allowed" }, 405)
+        return jsonResponse(
+          { success: false, error: "Method not allowed" },
+          405,
+        )
       }
-      const body = await parseBody<{ coupleId?: string; userId?: string }>(request)
+      const body = await parseBody<{ coupleId?: string userId?: string }>(
+        request,
+      )
       if (!body) {
         return jsonResponse({ success: false, error: "Invalid JSON body" }, 400)
       }
       const result = await unpairCouple(
         env.CHAT_DB,
         body.coupleId || "",
-        body.userId || ""
+        body.userId || "",
       )
       return jsonResponse(result, result.success ? 200 : 400)
     }
@@ -171,7 +210,10 @@ export default {
     // POST /api/couple/anniversary
     if (url.pathname === "/api/couple/anniversary") {
       if (request.method !== "POST") {
-        return jsonResponse({ success: false, error: "Method not allowed" }, 405)
+        return jsonResponse(
+          { success: false, error: "Method not allowed" },
+          405,
+        )
       }
       const body = await parseBody<{
         coupleId?: string
@@ -187,9 +229,68 @@ export default {
         env.CHAT_DB,
         body.coupleId || "",
         body.userId || "",
-        date
+        date,
       )
       return jsonResponse(result, result.success ? 200 : 400)
+    }
+
+    // POST /api/couple/message (HTTP fallback for sending messages)
+    if (url.pathname === "/api/couple/message") {
+      if (request.method !== "POST") {
+        return jsonResponse(
+          { success: false, error: "Method not allowed" },
+          405,
+        )
+      }
+      const body = await parseBody<{
+        coupleId?: string
+        senderId?: string
+        text?: string
+        type?: "text" | "heart" | "image"
+      }>(request)
+      if (!body || !body.coupleId || !body.senderId) {
+        return jsonResponse(
+          { success: false, error: "Missing required fields" },
+          400,
+        )
+      }
+      const msg: CoupleMessage = {
+        id: `msg-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+        couple_id: body.coupleId,
+        sender_id: body.senderId,
+        text: (body.text || "").trim(),
+        type: body.type || "text",
+        status: "sent",
+        created_at: Date.now(),
+      }
+      await saveMessage(env.CHAT_DB, msg)
+      // Broadcast to room if connected
+      roomManager.broadcastToRoom(
+        body.coupleId,
+        { type: "new_message", message: msg },
+        body.senderId,
+      )
+      return jsonResponse({ success: true, message: msg }, 200)
+    }
+
+    // GET /api/couple/messages?coupleId=<id>&limit=100 (HTTP fallback for history)
+    if (url.pathname === "/api/couple/messages") {
+      if (request.method !== "GET") {
+        return jsonResponse(
+          { success: false, error: "Method not allowed" },
+          405,
+        )
+      }
+      const coupleId = url.searchParams.get("coupleId")
+      if (!coupleId) {
+        return jsonResponse(
+          { success: false, error: "coupleId parameter is required" },
+          400,
+        )
+      }
+      const limit = parseInt(url.searchParams.get("limit") || "100", 10)
+      const messages = await getRecentMessages(env.CHAT_DB, coupleId, limit)
+      return jsonResponse({ success: true, messages }, 200)
     }
 
     // Unknown API routes
@@ -221,7 +322,9 @@ export default {
     // Cloudflare WebSocket Pair
     // @ts-ignore WebSocketPair is defined in Cloudflare Workers runtime
     const webSocketPair = new WebSocketPair()
-    const [client, server] = Object.values(webSocketPair) as [WebSocket, WebSocket]
+    const [client, server] = Object.values(
+      webSocketPair,
+    ) as [WebSocket, WebSocket]
 
     // @ts-ignore accept() method on Cloudflare server WebSocket
     server.accept()
@@ -245,7 +348,7 @@ export default {
               JSON.stringify({
                 type: "history",
                 messages: history,
-              })
+              }),
             )
 
             // Báo cho user biết đối phương hiện tại có đang online hay không
@@ -254,7 +357,7 @@ export default {
               JSON.stringify({
                 type: "partner_status",
                 isOnline,
-              })
+              }),
             )
             break
           }
@@ -292,7 +395,7 @@ export default {
                 userId,
                 isTyping: !!action.isTyping,
               },
-              userId
+              userId,
             )
             break
           }
@@ -304,7 +407,7 @@ export default {
                 type: "heart_received",
                 senderId: userId,
               },
-              userId
+              userId,
             )
             break
           }
@@ -315,7 +418,7 @@ export default {
           JSON.stringify({
             type: "error",
             message: "Malformed JSON payload",
-          })
+          }),
         )
       }
     })
