@@ -24,6 +24,7 @@ export async function getFeaturedPlaces(): Promise<FeaturedPlace[]> {
       .select("*")
       .eq("is_featured", true)
       .order("rating", { ascending: false })
+      .limit(4)
 
     if (error || !data || data.length === 0) {
       // Thử fallback query top rating nếu chưa đánh dấu is_featured
