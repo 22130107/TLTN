@@ -1,41 +1,221 @@
-import { roomManager } from "./roomManager"
-import { getRecentMessages, saveMessage } from "./db"
-import type { Env, WsClientAction, CoupleMessage } from "./types"
+import { roomManager } from "./roomManager.ts"
+import {
+  getRecentMessages,
+  saveMessage,
+  getCoupleStatus,
+  createCoupleRequest,
+  acceptCoupleRequest,
+  rejectCoupleRequest,
+  cancelCoupleRequest,
+  unpairCouple,
+  updateAnniversary,
+} from "./db.ts"
+import type { Env, WsClientAction, CoupleMessage, ExecutionContext } from "./types.ts"
+
+const corsHeaders: Record<string, string> = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+}
+
+function jsonResponse(data: unknown, status = 200): Response {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      "Content-Type": "application/json",
+      ...corsHeaders,
+    },
+  })
+}
+
+async function parseBody<T>(request: Request): Promise<T | null> {
+  try {
+    return (await request.json()) as T
+  } catch {
+    return null
+  }
+}
 
 export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  async fetch(
+    request: Request,
+    env: Env = {},
+    ctx: ExecutionContext = { waitUntil: () => {}, passThroughOnException: () => {} }
+  ): Promise<Response> {
+    // CORS Preflight Options
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        status: 204,
+        headers: corsHeaders,
+      })
+    }
+
     const url = new URL(request.url)
 
     // Health check endpoint
     if (url.pathname === "/health" || url.pathname === "/") {
       if (request.headers.get("Upgrade") !== "websocket") {
-        return new Response(
-          JSON.stringify({
-            status: "ok",
-            service: "HYUN Couple Cloudflare WebSocket Worker",
-            timestamp: Date.now(),
-          }),
-          {
-            headers: {
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Origin": "*",
-            },
-          }
-        )
+        return jsonResponse({
+          status: "ok",
+          service: "HYUN Couple Cloudflare WebSocket Worker",
+          timestamp: Date.now(),
+        })
       }
     }
 
+    // -------------------------------------------------------------
+    // HTTP REST API Endpoints
+    // -------------------------------------------------------------
+
+    // GET /api/couple/status?userId=<id>
+    if (url.pathname === "/api/couple/status") {
+      if (request.method !== "GET") {
+        return jsonResponse({ success: false, error: "Method not allowed" }, 405)
+      }
+      const userId = url.searchParams.get("userId")
+      if (!userId) {
+        return jsonResponse({ success: false, error: "userId parameter is required" }, 400)
+      }
+      const status = await getCoupleStatus(env.CHAT_DB, userId)
+      return jsonResponse({
+        success: true,
+        ...status,
+      })
+    }
+
+    // POST /api/couple/request
+    if (url.pathname === "/api/couple/request") {
+      if (request.method !== "POST") {
+        return jsonResponse({ success: false, error: "Method not allowed" }, 405)
+      }
+      const body = await parseBody<{ senderId?: string; receiverId?: string }>(request)
+      if (!body) {
+        return jsonResponse({ success: false, error: "Invalid JSON body" }, 400)
+      }
+      const result = await createCoupleRequest(
+        env.CHAT_DB,
+        body.senderId || "",
+        body.receiverId || ""
+      )
+      return jsonResponse(result, result.success ? 200 : 400)
+    }
+
+    // POST /api/couple/accept
+    if (url.pathname === "/api/couple/accept") {
+      if (request.method !== "POST") {
+        return jsonResponse({ success: false, error: "Method not allowed" }, 405)
+      }
+      const body = await parseBody<{ requestId?: string; userId?: string }>(request)
+      if (!body) {
+        return jsonResponse({ success: false, error: "Invalid JSON body" }, 400)
+      }
+      const result = await acceptCoupleRequest(
+        env.CHAT_DB,
+        body.requestId || "",
+        body.userId || ""
+      )
+      return jsonResponse(result, result.success ? 200 : 400)
+    }
+
+    // POST /api/couple/reject
+    if (url.pathname === "/api/couple/reject") {
+      if (request.method !== "POST") {
+        return jsonResponse({ success: false, error: "Method not allowed" }, 405)
+      }
+      const body = await parseBody<{ requestId?: string; userId?: string }>(request)
+      if (!body) {
+        return jsonResponse({ success: false, error: "Invalid JSON body" }, 400)
+      }
+      const result = await rejectCoupleRequest(
+        env.CHAT_DB,
+        body.requestId || "",
+        body.userId || ""
+      )
+      return jsonResponse(result, result.success ? 200 : 400)
+    }
+
+    // POST /api/couple/cancel
+    if (url.pathname === "/api/couple/cancel") {
+      if (request.method !== "POST") {
+        return jsonResponse({ success: false, error: "Method not allowed" }, 405)
+      }
+      const body = await parseBody<{ requestId?: string; userId?: string }>(request)
+      if (!body) {
+        return jsonResponse({ success: false, error: "Invalid JSON body" }, 400)
+      }
+      const result = await cancelCoupleRequest(
+        env.CHAT_DB,
+        body.requestId || "",
+        body.userId || ""
+      )
+      return jsonResponse(result, result.success ? 200 : 400)
+    }
+
+    // POST /api/couple/unpair
+    if (url.pathname === "/api/couple/unpair") {
+      if (request.method !== "POST") {
+        return jsonResponse({ success: false, error: "Method not allowed" }, 405)
+      }
+      const body = await parseBody<{ coupleId?: string; userId?: string }>(request)
+      if (!body) {
+        return jsonResponse({ success: false, error: "Invalid JSON body" }, 400)
+      }
+      const result = await unpairCouple(
+        env.CHAT_DB,
+        body.coupleId || "",
+        body.userId || ""
+      )
+      return jsonResponse(result, result.success ? 200 : 400)
+    }
+
+    // POST /api/couple/anniversary
+    if (url.pathname === "/api/couple/anniversary") {
+      if (request.method !== "POST") {
+        return jsonResponse({ success: false, error: "Method not allowed" }, 405)
+      }
+      const body = await parseBody<{
+        coupleId?: string
+        userId?: string
+        anniversaryDate?: string
+        date?: string
+      }>(request)
+      if (!body) {
+        return jsonResponse({ success: false, error: "Invalid JSON body" }, 400)
+      }
+      const date = body.anniversaryDate || body.date || ""
+      const result = await updateAnniversary(
+        env.CHAT_DB,
+        body.coupleId || "",
+        body.userId || "",
+        date
+      )
+      return jsonResponse(result, result.success ? 200 : 400)
+    }
+
+    // Unknown API routes
+    if (url.pathname.startsWith("/api/")) {
+      return jsonResponse({ success: false, error: "Not found" }, 404)
+    }
+
+    // -------------------------------------------------------------
     // WebSocket Upgrade Handler
+    // -------------------------------------------------------------
     const upgradeHeader = request.headers.get("Upgrade")
     if (upgradeHeader !== "websocket") {
-      return new Response("Expected Upgrade: websocket", { status: 426 })
+      return new Response("Expected Upgrade: websocket", {
+        status: 426,
+        headers: corsHeaders,
+      })
     }
 
     const coupleId = url.searchParams.get("coupleId")
     const userId = url.searchParams.get("userId")
 
     if (!coupleId || !userId) {
-      return new Response("Missing coupleId or userId query parameter", { status: 400 })
+      return new Response("Missing coupleId or userId query parameter", {
+        status: 400,
+        headers: corsHeaders,
+      })
     }
 
     // Cloudflare WebSocket Pair
