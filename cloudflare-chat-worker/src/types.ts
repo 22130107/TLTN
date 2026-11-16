@@ -1,3 +1,24 @@
+export interface Couple {
+  id: string
+  user_1: string
+  user_2: string
+  anniversary_date: string // YYYY-MM-DD
+  nickname_1?: string | null
+  nickname_2?: string | null
+  status: "active" | "separated"
+  created_at: number // epoch ms
+  updated_at: number // epoch ms
+}
+
+export interface CoupleRequest {
+  id: string
+  sender_id: string
+  receiver_id: string
+  status: "pending" | "accepted" | "rejected" | "canceled"
+  created_at: number // epoch ms
+  updated_at: number // epoch ms
+}
+
 export interface CoupleMessage {
   id: string
   couple_id: string
@@ -6,6 +27,12 @@ export interface CoupleMessage {
   type: "text" | "heart" | "image"
   status?: "sent" | "delivered" | "read"
   created_at: number // epoch ms
+}
+
+export interface CoupleStatusResult {
+  couple: Couple | null
+  incomingRequests: CoupleRequest[]
+  outgoingRequests: CoupleRequest[]
 }
 
 export type WsClientAction =
@@ -22,11 +49,18 @@ export type WsServerEvent =
   | { type: "heart_received"; senderId: string }
   | { type: "error"; message: string }
 
+export interface D1Result<T = unknown> {
+  results?: T[]
+  success: boolean
+  meta?: unknown
+  error?: string
+}
+
 export interface D1PreparedStatement {
   bind(...values: unknown[]): D1PreparedStatement
   first<T = unknown>(colName?: string): Promise<T | null>
   run(): Promise<{ success: boolean; meta: unknown }>
-  all<T = unknown>(): Promise<{ results?: T[]; success: boolean }>
+  all<T = unknown>(): Promise<D1Result<T>>
 }
 
 export interface D1Database {
