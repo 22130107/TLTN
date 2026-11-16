@@ -1,0 +1,14 @@
+name = "hyun-couple-chat-worker"
+main = "src/index.ts"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Cloudflare D1 Database Binding for Couple Chat Messages
+[[d1_databases]]
+binding = "CHAT_DB"
+database_name = "hyun-couple-chat"
+database_id = "local-d1-placeholder"
+
+[vars]
+ENVIRONMENT = "production"
+MAX_HISTORY_MESSAGES = "100"

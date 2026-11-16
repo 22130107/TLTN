@@ -1,0 +1,15 @@
+{
+  "name": "cloudflare-chat-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker WebSocket & D1 Chat Backend for Couple Feature",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241112.0",
+    "typescript": "^5.7.2",
+    "wrangler": "^3.91.0"
+  }
+}
