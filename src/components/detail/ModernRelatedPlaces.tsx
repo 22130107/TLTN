@@ -1,20 +1,23 @@
 "use client"
-// Filter out current place and pick 3 recommendations
 import Link from "next/link"
-import { EXPLORE_PLACES } from "@/data/explorePlacesData"
+import { EXPLORE_PLACES, type ExplorePlace } from "@/data/explorePlacesData"
 import ExploreCard from "@/components/places/ExploreCard"
 
 interface ModernRelatedPlacesProps {
-  currentId: string
+  currentId?: string
+  places?: ExplorePlace[]
 }
 
 export default function ModernRelatedPlaces({
   currentId,
+  places,
 }: ModernRelatedPlacesProps) {
-  const relatedList = EXPLORE_PLACES.filter((p) => p.id !== currentId).slice(
-    0,
-    3,
-  )
+  const relatedList =
+    places && places.length > 0
+      ? places
+      : currentId
+        ? EXPLORE_PLACES.filter((p) => p.id !== currentId).slice(0, 3)
+        : EXPLORE_PLACES.slice(0, 3)
 
   if (relatedList.length === 0) return null
 

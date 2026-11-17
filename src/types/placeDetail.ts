@@ -22,6 +22,7 @@ export interface ReviewItem {
 export interface PlaceDetailModel {
   id: string
   name: string
+  categoryId?: string
   categoryBadge: string
   badgeColor?: string
   rating: number

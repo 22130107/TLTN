@@ -49,6 +49,8 @@ const DynamicMiniMap = dynamic<MiniExploreMapProps>(
 
 export interface FilterState {
   distance: string
+  minDistance?: number
+  maxDistance?: number
   categories: string[]
   priceRange: string[]
   minRating: number
@@ -149,10 +151,56 @@ export default function ExploreSidebar({
     onFilterChange({ ...filter, priceRange: nextPrice })
   }
 
-  const setDistance = (dist: string) => {
+  const currentMax =
+    typeof filter.maxDistance === "number"
+      ? filter.maxDistance
+      : filter.distance === "under-5"
+        ? 5
+        : filter.distance === "1-3"
+          ? 3
+          : filter.distance === "3-5"
+            ? 5
+            : 30 // 30 = All / không giới hạn
+
+  const currentMin =
+    typeof filter.minDistance === "number"
+      ? filter.minDistance
+      : filter.distance === "1-3"
+        ? 1
+        : filter.distance === "3-5"
+          ? 3
+          : filter.distance === "above-5"
+            ? 5
+            : 0
+
+  const handleSliderChange = (newVal: number) => {
     onFilterChange({
       ...filter,
-      distance: filter.distance === dist ? "all" : dist,
+      distance: newVal >= 30 ? "all" : `under-${newVal}`,
+      minDistance: 0,
+      maxDistance: newVal,
+    })
+  }
+
+  const handlePresetSelect = (min: number, max: number, id: string) => {
+    if (
+      filter.distance === id ||
+      (currentMin === min && currentMax === max && id !== "all")
+    ) {
+      onFilterChange({
+        ...filter,
+        distance: "all",
+        minDistance: 0,
+        maxDistance: 30,
+      })
+      return
+    }
+
+    onFilterChange({
+      ...filter,
+      distance: id,
+      minDistance: min,
+      maxDistance: max,
     })
   }
 
@@ -346,59 +394,118 @@ export default function ExploreSidebar({
         </div>
       )}
 
-      {}
+      {/* Distance Filter with Slider */}
       <div className="space-y-3">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-[#64748B]">
-          Khoảng cách
-        </h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-[#64748B]">
+            Khoảng cách
+          </h3>
+          {currentMax < 30 || currentMin > 0 ? (
+            <span className="rounded-full border border-[#1E293B] bg-[#FFE4E8] px-2 py-0.5 text-[10.5px] font-bold text-[#E55067] shadow-[1px_1px_0px_#1E293B]">
+              {currentMin > 0 && currentMax < 30
+                ? `${currentMin} - ${currentMax} km`
+                : currentMin > 0
+                  ? `> ${currentMin} km`
+                  : `≤ ${currentMax} km`}
+            </span>
+          ) : (
+            <span className="text-[10.5px] font-semibold text-slate-400">
+              Tất cả
+            </span>
+          )}
+        </div>
 
-        {}
-        <button
-          type="button"
-          onClick={() =>
-            setDistance(filter.distance === "under-5" ? "all" : "under-5")
-          }
-          className={`w-full rounded-lg py-2 text-center text-xs font-semibold border border-[#1E293B] shadow-[1.5px_1.5px_0px_#1E293B] transition-all cursor-pointer ${
-            filter.distance === "under-5"
-              ? "bg-[#E55067] text-white"
-              : "bg-neutral-50 text-[#1E293B] hover:bg-neutral-100"
-          }`}
-        >
-          Trong bán kính 5km
-        </button>
+        {/* Interactive Slider Box */}
+        <div className="rounded-xl border border-[#1E293B] bg-[#FFF8F5] p-3 shadow-[2px_2px_0px_#1E293B]">
+          {/* Readout Row */}
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-1.5 min-w-0">
+              <span className="text-sm">🎯</span>
+              <span className="text-xs font-bold text-[#1E293B] truncate">
+                {currentMax >= 30 && currentMin === 0
+                  ? "Phạm vi: Tất cả"
+                  : currentMin > 0 && currentMax < 30
+                    ? `Từ ${currentMin}km đến ${currentMax}km`
+                    : currentMin > 0
+                      ? `Cách xa trên ${currentMin}km`
+                      : `Trong bán kính:`}
+              </span>
+            </div>
+            <span className="shrink-0 rounded-lg border border-[#1E293B] bg-white px-2 py-0.5 text-xs font-black text-[#E55067] shadow-[1px_1px_0px_#1E293B]">
+              {currentMax >= 30 && currentMin === 0
+                ? "Không giới hạn"
+                : `${currentMax} km`}
+            </span>
+          </div>
 
-        {}
-        <div className="space-y-2 text-xs font-medium text-[#1E293B]">
-          <label className="flex cursor-pointer items-center gap-2">
+          {/* Interactive Range Slider */}
+          <div className="relative pt-1 pb-1">
             <input
-              type="radio"
-              name="distance"
-              checked={filter.distance === "1-3"}
-              onChange={() => setDistance("1-3")}
-              className="accent-[#E55067]"
+              type="range"
+              min="1"
+              max="30"
+              step="1"
+              value={currentMax}
+              onChange={(e) => handleSliderChange(Number(e.target.value))}
+              className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-[#E55067] border border-[#1E293B] transition-all"
+              style={{
+                background: `linear-gradient(to right, #E55067 0%, #E55067 ${
+                  ((currentMax - 1) / (30 - 1)) * 100
+                }%, #E2E8F0 ${
+                  ((currentMax - 1) / (30 - 1)) * 100
+                }%, #E2E8F0 100%)`,
+              }}
+              aria-label="Thanh trượt chọn khoảng cách"
             />
-            <span>1 - 3km</span>
-          </label>
-          <label className="flex cursor-pointer items-center gap-2">
-            <input
-              type="radio"
-              name="distance"
-              checked={filter.distance === "3-5"}
-              onChange={() => setDistance("3-5")}
-              className="accent-[#E55067]"
-            />
-            <span>3 - 5km</span>
-          </label>
-          <label className="flex cursor-pointer items-center gap-2">
-            <input
-              type="radio"
-              name="distance"
-              checked={filter.distance === "above-5"}
-              onChange={() => setDistance("above-5")}
-              className="accent-[#E55067]"
-            />
-            <span>Trên 5km</span>
-          </label>
+            {/* Range markers */}
+            <div className="flex justify-between items-center text-[9.5px] font-bold text-slate-400 mt-1.5 px-0.5">
+              <span>1 km</span>
+              <span>5 km</span>
+              <span>10 km</span>
+              <span>20 km</span>
+              <span className="text-[#E55067]">30km+ (Tất cả)</span>
+            </div>
+          </div>
+
+          {/* Preset Chips */}
+          <div className="mt-3 pt-2.5 border-t border-[#1E293B]/10">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#64748B] mb-1.5">
+              Chọn nhanh phạm vi:
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {[
+                { id: "all", label: "Tất cả", min: 0, max: 30 },
+                { id: "under-3", label: "≤ 3km", min: 0, max: 3 },
+                { id: "under-5", label: "≤ 5km", min: 0, max: 5 },
+                { id: "under-10", label: "≤ 10km", min: 0, max: 10 },
+                { id: "1-3", label: "1 - 3km", min: 1, max: 3 },
+                { id: "3-5", label: "3 - 5km", min: 3, max: 5 },
+                { id: "above-5", label: "> 5km", min: 5, max: 30 },
+              ].map((preset) => {
+                const isActive =
+                  preset.id === "all"
+                    ? currentMax >= 30 && currentMin === 0
+                    : currentMin === preset.min && currentMax === preset.max
+
+                return (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    onClick={() =>
+                      handlePresetSelect(preset.min, preset.max, preset.id)
+                    }
+                    className={`rounded-md border border-[#1E293B] px-2 py-1 text-[11px] font-bold transition-all cursor-pointer shadow-[1px_1px_0px_#1E293B] ${
+                      isActive
+                        ? "bg-[#E55067] text-white -translate-y-0.5"
+                        : "bg-white text-[#1E293B] hover:bg-neutral-100"
+                    }`}
+                  >
+                    {preset.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
         </div>
       </div>
 

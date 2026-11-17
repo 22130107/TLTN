@@ -105,9 +105,10 @@ export default {
           405,
         )
       }
-      const body = await parseBody<{ senderId?: string receiverId?: string }>(
-        request,
-      )
+      const body = await parseBody<{
+        senderId?: string
+        receiverId?: string
+      }>(request)
       if (!body) {
         return jsonResponse({ success: false, error: "Invalid JSON body" }, 400)
       }
@@ -127,9 +128,10 @@ export default {
           405,
         )
       }
-      const body = await parseBody<{ requestId?: string userId?: string }>(
-        request,
-      )
+      const body = await parseBody<{
+        requestId?: string
+        userId?: string
+      }>(request)
       if (!body) {
         return jsonResponse({ success: false, error: "Invalid JSON body" }, 400)
       }
@@ -149,9 +151,10 @@ export default {
           405,
         )
       }
-      const body = await parseBody<{ requestId?: string userId?: string }>(
-        request,
-      )
+      const body = await parseBody<{
+        requestId?: string
+        userId?: string
+      }>(request)
       if (!body) {
         return jsonResponse({ success: false, error: "Invalid JSON body" }, 400)
       }
@@ -171,9 +174,10 @@ export default {
           405,
         )
       }
-      const body = await parseBody<{ requestId?: string userId?: string }>(
-        request,
-      )
+      const body = await parseBody<{
+        requestId?: string
+        userId?: string
+      }>(request)
       if (!body) {
         return jsonResponse({ success: false, error: "Invalid JSON body" }, 400)
       }
@@ -193,9 +197,10 @@ export default {
           405,
         )
       }
-      const body = await parseBody<{ coupleId?: string userId?: string }>(
-        request,
-      )
+      const body = await parseBody<{
+        coupleId?: string
+        userId?: string
+      }>(request)
       if (!body) {
         return jsonResponse({ success: false, error: "Invalid JSON body" }, 400)
       }

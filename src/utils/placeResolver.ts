@@ -61,6 +61,7 @@ export function getPlaceDetail(id: string): PlaceDetailModel {
     return {
       id: exploreItem.id,
       name: exploreItem.name,
+      categoryId: exploreItem.categoryType,
       categoryBadge: exploreItem.badge || "Món Ngon Chuẩn Gu",
       badgeColor: exploreItem.badgeColor || "bg-[#FF5376]",
       rating: exploreItem.rating || 4.8,

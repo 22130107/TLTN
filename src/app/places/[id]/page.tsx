@@ -10,6 +10,7 @@ import ModernRelatedPlaces from "@/components/detail/ModernRelatedPlaces"
 import {
   getPlaceDetailById,
   getAllPlaceIdsFromDb,
+  getRelatedPlaces,
 } from "@/services/placesService"
 
 export const revalidate = 60
@@ -54,6 +55,8 @@ export default async function PlaceDetailPage({
     notFound()
   }
 
+  const relatedPlaces = await getRelatedPlaces(place, 3)
+
   return (
     <div className="relative min-h-screen bg-[#fdefdf] text-[#1E293B] selection:bg-[#FF5C77] selection:text-white flex flex-col justify-between overflow-x-hidden">
       {/* Decorative Background Artwork matching Places Explore page */}
@@ -89,7 +92,7 @@ export default async function PlaceDetailPage({
           </div>
 
           {/* Related Recommendations Carousel / Grid */}
-          <ModernRelatedPlaces currentId={place.id} />
+          <ModernRelatedPlaces places={relatedPlaces} currentId={place.id} />
         </main>
       </div>
 
