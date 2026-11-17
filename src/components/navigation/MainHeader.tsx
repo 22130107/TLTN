@@ -1,9 +1,14 @@
 "use client" /* 1. Left: Brand Logo */ /* 2. Middle: Navigation Links (Desktop lg+) */ /* 3. Right: Search Box & Profile Avatar */ /* Search Pill */ /* User Profile Avatar (Menu Trigger) */ /* Dropdown Navigation Menu Card */ /* Header Info */ /* Navigation Menu Items */ /* Mobile Hamburger Menu Toggle */ /* Mobile Drawer Dropdown */ /* Mobile Search input */ /* Mobile Navigation List */ /* User Profile Avatar / Login Button */
 import { useState, useEffect, useRef } from "react"
+
 import Link from "next/link"
+
 import Image from "next/image"
+
 import { useRouter } from "next/navigation"
+
 import { useAuth } from "@/contexts/AuthContext"
+import { openChatBox } from "@/utils/chatBoxEvents"
 
 export interface MainHeaderProps {
   activeTab?: "home" | "explore" | "places" | "articles" | "schedule"
@@ -11,11 +16,15 @@ export interface MainHeaderProps {
 
 export default function MainHeader({ activeTab = "home" }: MainHeaderProps) {
   const router = useRouter()
+
   const { user, profile, openAuthModal, signOut } = useAuth()
 
   const [searchQuery, setSearchQuery] = useState("")
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
   const [profileMenuOpen, setProfileMenuOpen] = useState(false)
+
   const profileMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -59,7 +68,9 @@ export default function MainHeader({ activeTab = "home" }: MainHeaderProps) {
 
   const navItems = [
     { id: "home", label: "Trang chủ", href: "/" },
+
     { id: "explore", label: "Khám phá", href: "/places" },
+
     { id: "articles", label: "Bài viết", href: "/articles" },
   ]
 
@@ -159,7 +170,9 @@ export default function MainHeader({ activeTab = "home" }: MainHeaderProps) {
                 ) : (
                   <span className="font-bold text-sm text-[#1E293B]">
                     {(profile?.display_name || user.email || "U")
+
                       .slice(0, 1)
+
                       .toUpperCase()}
                   </span>
                 )}
@@ -175,7 +188,9 @@ export default function MainHeader({ activeTab = "home" }: MainHeaderProps) {
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div className="flex size-8 shrink-0 items-center justify-center rounded-full border border-[#1E293B] bg-white text-[#1E293B] font-bold text-xs shadow-[1px_1px_0px_#1E293B]">
                         {(profile?.display_name || user.email || "U")
+
                           .slice(0, 1)
+
                           .toUpperCase()}
                       </div>
                       <div className="min-w-0">
@@ -251,8 +266,32 @@ export default function MainHeader({ activeTab = "home" }: MainHeaderProps) {
 
                     <button
                       type="button"
+                      onClick={() => {
+                        setProfileMenuOpen(false)
+                        openChatBox("couple")
+                      }}
+                      className="group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-xs sm:text-sm font-semibold text-[#1E293B] hover:bg-neutral-100 hover:text-black transition-colors cursor-pointer text-left"
+                    >
+                      <svg
+                        className="size-4 shrink-0 text-[#FF5376] group-hover:text-pink-600 transition-colors"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                      </svg>
+                      <span>Cặp đôi & Trò chuyện</span>
+                    </button>
+
+                    <button
+                      type="button"
                       onClick={async () => {
                         setProfileMenuOpen(false)
+
                         await signOut()
                       }}
                       className="group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-xs sm:text-sm font-semibold text-[#1E293B] hover:bg-neutral-100 hover:text-black transition-colors text-left cursor-pointer"

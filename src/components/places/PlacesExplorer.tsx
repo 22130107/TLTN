@@ -55,6 +55,8 @@ export default function PlacesExplorer({
   const [searchQuery, setSearchQuery] = useState(urlQuery)
   const [filter, setFilter] = useState<FilterState>({
     distance: "all",
+    minDistance: 0,
+    maxDistance: 30,
     categories: [],
     priceRange: [],
     minRating: 0,
@@ -146,18 +148,31 @@ export default function PlacesExplorer({
           return false
         }
       }
-      if (filter.distance === "under-5" && place.distance > 5) return false
+      // Lọc theo khoảng cách (Slider / Phạm vi bán kính)
       if (
-        filter.distance === "1-3" &&
-        (place.distance < 1 || place.distance > 3)
-      )
-        return false
-      if (
-        filter.distance === "3-5" &&
-        (place.distance <= 3 || place.distance > 5)
-      )
-        return false
-      if (filter.distance === "above-5" && place.distance <= 5) return false
+        typeof filter.maxDistance === "number" &&
+        filter.maxDistance > 0 &&
+        filter.maxDistance < 30
+      ) {
+        if (place.distance > filter.maxDistance) return false
+      }
+      if (typeof filter.minDistance === "number" && filter.minDistance > 0) {
+        if (place.distance < filter.minDistance) return false
+      }
+      if (typeof filter.maxDistance !== "number") {
+        if (filter.distance === "under-5" && place.distance > 5) return false
+        if (
+          filter.distance === "1-3" &&
+          (place.distance < 1 || place.distance > 3)
+        )
+          return false
+        if (
+          filter.distance === "3-5" &&
+          (place.distance <= 3 || place.distance > 5)
+        )
+          return false
+        if (filter.distance === "above-5" && place.distance <= 5) return false
+      }
       if (
         filter.categories.length > 0 &&
         !filter.categories.includes(place.categoryType)
@@ -182,6 +197,8 @@ export default function PlacesExplorer({
     setSearchQuery("")
     setFilter({
       distance: "all",
+      minDistance: 0,
+      maxDistance: 30,
       categories: [],
       priceRange: [],
       minRating: 0,

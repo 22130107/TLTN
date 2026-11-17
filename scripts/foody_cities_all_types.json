@@ -1,0 +1,52 @@
+{
+  "221": {
+    "type": 1,
+    "name": "Chè Bà Hoàng",
+    "addr": "164/1E Trần Ngọc Quế, Quận Ninh Kiều, Cần Thơ"
+  },
+  "223": {
+    "type": 1,
+    "name": "Ốc Tự Nhiên - Trần Phú",
+    "addr": "34 Trần Phú, P. 1, Tp. Vũng Tàu, Vũng Tàu"
+  },
+  "224": {
+    "type": 1,
+    "name": "Cơm Tấm Tùng",
+    "addr": "32 Phan Đình Phùng, P. Mỹ Long, Thành Phố Long Xuyên, An Giang"
+  },
+  "226": {
+    "type": 1,
+    "name": "Tmore - Tiệm Trà Chanh - Hùng Vương",
+    "addr": "Hùng Vương, Phùng Chí Kiên, Thành Phố Bắc Kạn, Bắc Kạn"
+  },
+  "240": {
+    "type": 1,
+    "name": "Bún Bò Huế Bà Dinh",
+    "addr": "34 Nguyễn Văn Trỗi, P. Hội Thương, Thành Phố Pleiku, Gia Lai"
+  },
+  "243": {
+    "type": 1,
+    "name": "Bún Chả Nướng Hợp Thành",
+    "addr": "36 Nguyễn Khắc Viện, Thành Phố Hà Tĩnh, Hà Tĩnh"
+  },
+  "255": {
+    "type": 1,
+    "name": "Quán Cây Sung - Cháo Cá",
+    "addr": "Quốc Lộ 1A, P. 4, Thành Phố Tân An, Long An"
+  },
+  "262": {
+    "type": 1,
+    "name": "Thanh Thanh Hoa - Xôi Chiên & Cháo Gà",
+    "addr": "2 Trần Nhân Tông, Tp. Đồng Hới, Quảng Bình"
+  },
+  "268": {
+    "type": 1,
+    "name": "Bún Chả Ánh Dương",
+    "addr": "55 Điện Biên, Thành Phố Sơn La, Sơn La"
+  },
+  "274": {
+    "type": 1,
+    "name": "Hoa Đăng Quán - Ẩm Thực Chay",
+    "addr": "35B Huyện Toại, Thành Phố Mỹ Tho, Tiền Giang"
+  }
+}

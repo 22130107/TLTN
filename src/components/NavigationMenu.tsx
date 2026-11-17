@@ -8,6 +8,8 @@ import { useState, useEffect, useRef, type ReactNode } from "react"
 
 import Link from "next/link"
 
+import { openChatBox } from "@/utils/chatBoxEvents"
+
 interface MenuItem {
   id: string
 
@@ -63,6 +65,28 @@ const MENU_ITEMS: MenuItem[] = [
         <line x1="16" y1="2" x2="16" y2="6" />
         <line x1="8" y1="2" x2="8" y2="6" />
         <line x1="3" y1="10" x2="21" y2="10" />
+      </svg>
+    ),
+  },
+
+  {
+    id: "couple",
+
+    label: "Cặp đôi & Chat",
+
+    href: "/?openChat=couple",
+
+    icon: (
+      <svg
+        className="size-[19px] shrink-0"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
       </svg>
     ),
   },
@@ -189,34 +213,57 @@ export default function NavigationMenu() {
 
                 return (
                   <li key={item.id} className={pushClass}>
-                    <Link
-                      href={item.href}
-                      onClick={() => {
-                        setActiveItem(item.id)
+                    {item.id === "couple" ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveItem(item.id)
 
-                        setIsOpen(false)
-                      }}
-                      className="group flex items-center gap-3.5 text-[18px] font-['Inter:Bold','Inter',sans-serif] font-bold tracking-[0.3px] transition-all duration-200 text-white/90 hover:text-white hover:translate-x-2 active:scale-95"
-                    >
-                      {}
-                      <span
-                        className={`size-[5px] shrink-0 rounded-full bg-white transition-all duration-200 ${
-                          isActive
-                            ? "opacity-100 scale-100"
-                            : "opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100"
-                        }`}
-                      />
+                          setIsOpen(false)
 
-                      {}
-                      <span className="text-white/80 transition-all duration-200 group-hover:text-white group-hover:scale-110">
-                        {item.icon}
-                      </span>
+                          openChatBox("couple")
+                        }}
+                        className="group flex w-full items-center gap-3.5 text-[18px] font-['Inter:Bold','Inter',sans-serif] font-bold tracking-[0.3px] transition-all duration-200 text-white/90 hover:text-white hover:translate-x-2 active:scale-95 cursor-pointer text-left"
+                      >
+                        <span
+                          className={`size-[5px] shrink-0 rounded-full bg-white transition-all duration-200 ${
+                            isActive
+                              ? "opacity-100 scale-100"
+                              : "opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100"
+                          }`}
+                        />
+                        <span className="text-white/80 transition-all duration-200 group-hover:text-white group-hover:scale-110">
+                          {item.icon}
+                        </span>
+                        <span className="transition-transform duration-200">
+                          {item.label}
+                        </span>
+                      </button>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        onClick={() => {
+                          setActiveItem(item.id)
 
-                      {}
-                      <span className="transition-transform duration-200">
-                        {item.label}
-                      </span>
-                    </Link>
+                          setIsOpen(false)
+                        }}
+                        className="group flex items-center gap-3.5 text-[18px] font-['Inter:Bold','Inter',sans-serif] font-bold tracking-[0.3px] transition-all duration-200 text-white/90 hover:text-white hover:translate-x-2 active:scale-95"
+                      >
+                        <span
+                          className={`size-[5px] shrink-0 rounded-full bg-white transition-all duration-200 ${
+                            isActive
+                              ? "opacity-100 scale-100"
+                              : "opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100"
+                          }`}
+                        />
+                        <span className="text-white/80 transition-all duration-200 group-hover:text-white group-hover:scale-110">
+                          {item.icon}
+                        </span>
+                        <span className="transition-transform duration-200">
+                          {item.label}
+                        </span>
+                      </Link>
+                    )}
                   </li>
                 )
               })}

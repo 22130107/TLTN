@@ -19,15 +19,17 @@ export interface FeaturedPlacesSectionProps {
 export default function FeaturedPlacesSection({
   initialPlaces,
 }: FeaturedPlacesSectionProps) {
-  const places =
+  const places = (
     initialPlaces && initialPlaces.length > 0 ? initialPlaces : FEATURED_PLACES
+  ).slice(0, 4)
   const { isFavorite, toggleFavorite } = useFavorites()
 
   return (
     <section className="w-full bg-[#fdefdf] pt-1 pb-6 sm:pt-2 sm:pb-8 transition-colors">
       <div className="mx-auto max-w-[1360px] px-3 sm:px-5 lg:px-6">
         <div className="flex flex-col lg:flex-row gap-3.5 lg:gap-4 items-stretch">
-          <div className="flex-1 flex flex-col justify-between">
+          {/* Left: Section Header & 4 Featured Places Grid */}
+          <div className="flex-1 min-w-0 flex flex-col justify-between">
             <div className="flex items-center justify-between mb-3 sm:mb-4">
               <div className="inline-flex items-center px-3 py-1 sm:px-4 sm:py-1.5 rounded-xl bg-[#f9d5b5] border border-[#1E293B] shadow-[1.5px_1.5px_0px_#1E293B] shrink-0">
                 <Image
@@ -163,6 +165,7 @@ export default function FeaturedPlacesSection({
             </div>
           </div>
 
+          {/* Right: Couple Promo Banner */}
           <div className="w-full max-w-[320px] sm:max-w-[350px] lg:max-w-none lg:w-[26%] xl:w-[25.5%] 2xl:w-[25%] shrink-0 flex flex-col justify-start items-center mx-auto lg:mx-0">
             <div className="relative w-full aspect-[380/441] flex items-center justify-center">
               <Image
