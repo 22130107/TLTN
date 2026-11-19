@@ -1,4 +1,4 @@
-import { createServerClient } from "@/lib/supabase/server"
+import { createServerClient, isSupabaseConfigured } from "@/lib/supabase/server"
 import { mockScheduleItems, mockUserProfile } from "@/data/profileData"
 import type { ScheduleItem, ScheduleStatus, UserProfile } from "@/types/profile"
 import type { Database } from "@/lib/supabase/types"
@@ -63,10 +63,10 @@ function mapScheduleRowToItem(row: ScheduleWithPlaceRow): ScheduleItem {
  * Lấy danh sách lịch trình từ DB Supabase (kèm thông tin địa điểm)
  */
 export async function getSchedules(userId?: string): Promise<ScheduleItem[]> {
+  if (!isSupabaseConfigured || !userId) {
+    return []
+  }
   try {
-    if (!userId) {
-      return []
-    }
 
     const supabase = createServerClient()
     const { data, error } = await supabase
@@ -90,6 +90,9 @@ export async function getSchedules(userId?: string): Promise<ScheduleItem[]> {
  * Lấy thông tin hồ sơ người dùng từ DB Supabase
  */
 export async function getUserProfile(userId?: string): Promise<UserProfile> {
+  if (!isSupabaseConfigured) {
+    return mockUserProfile
+  }
   try {
     const supabase = createServerClient()
     let query = supabase.from("profiles").select("*")

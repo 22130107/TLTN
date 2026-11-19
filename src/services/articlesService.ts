@@ -1,4 +1,4 @@
-import { createServerClient } from "@/lib/supabase/server"
+import { createServerClient, isSupabaseConfigured } from "@/lib/supabase/server"
 import { supabase as clientSupabase } from "@/lib/supabase/client"
 import type { SupabaseClient } from "@supabase/supabase-js"
 import {
@@ -167,6 +167,25 @@ function mapRowToArticle(row: ArticleRow): Article {
  */
 export async function getArticles(): Promise<Article[]> {
   const localArticles = getLocalArticles()
+  if (!isSupabaseConfigured) {
+    const fallback = getStaticAllArticles()
+    if (localArticles.length === 0) return fallback
+    const seenIds = new Set<string>()
+    const merged: Article[] = []
+    for (const a of localArticles) {
+      if (!seenIds.has(a.id)) {
+        seenIds.add(a.id)
+        merged.push(a)
+      }
+    }
+    for (const a of fallback) {
+      if (!seenIds.has(a.id)) {
+        seenIds.add(a.id)
+        merged.push(a)
+      }
+    }
+    return merged
+  }
   try {
     const supabase = getSupabaseClient()
     const { data, error } = await supabase
@@ -224,6 +243,9 @@ export async function getArticles(): Promise<Article[]> {
  * Lấy bài viết tiêu điểm (featured)
  */
 export async function getFeaturedArticle(): Promise<Article | null> {
+  if (!isSupabaseConfigured) {
+    return getStaticFeaturedArticle() || null
+  }
   try {
     const supabase = getSupabaseClient()
     const { data, error } = await supabase
@@ -272,6 +294,10 @@ export async function getArticleById(
     return localMatch
   }
 
+  if (!isSupabaseConfigured) {
+    return getStaticArticleById(idOrSlug) || null
+  }
+
   try {
     const supabase = getSupabaseClient()
 
@@ -314,6 +340,9 @@ export async function getRelatedArticles(
   category: string,
   limit: number = 3,
 ): Promise<Article[]> {
+  if (!isSupabaseConfigured) {
+    return getStaticRelatedArticles(currentId, category, limit)
+  }
   try {
     const supabase = getSupabaseClient()
     const { data, error } = await supabase
@@ -348,6 +377,9 @@ export async function getRelatedArticles(
  * Lấy toàn bộ ID bài viết phục vụ generateStaticParams
  */
 export async function getAllArticleIdsFromDb(): Promise<string[]> {
+  if (!isSupabaseConfigured) {
+    return getStaticAllArticles().map((a) => a.id)
+  }
   try {
     const supabase = getSupabaseClient()
     const { data } = await supabase.from("articles").select("id, slug")

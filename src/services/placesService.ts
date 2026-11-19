@@ -1,4 +1,4 @@
-import { createServerClient } from "@/lib/supabase/server"
+import { createServerClient, isSupabaseConfigured } from "@/lib/supabase/server"
 import { FEATURED_PLACES, type FeaturedPlace } from "@/data/featuredPlacesData"
 import { EXPLORE_PLACES, type ExplorePlace } from "@/data/explorePlacesData"
 import { getPlaceDetail } from "@/utils/placeResolver"
@@ -17,6 +17,9 @@ type ReviewRow = Database["public"]["Tables"]["reviews"]["Row"]
  * Lấy danh sách địa điểm nổi bật cho Trang chủ
  */
 export async function getFeaturedPlaces(): Promise<FeaturedPlace[]> {
+  if (!isSupabaseConfigured) {
+    return FEATURED_PLACES
+  }
   try {
     const supabase = createServerClient()
     const { data, error } = await supabase
@@ -128,6 +131,9 @@ export function mapPlaceRowToExplore(p: PlaceRow): ExplorePlace {
  * Lấy toàn bộ danh sách địa điểm cho Trang Khám phá
  */
 export async function getExplorePlaces(): Promise<ExplorePlace[]> {
+  if (!isSupabaseConfigured) {
+    return EXPLORE_PLACES
+  }
   try {
     const supabase = createServerClient()
     const { data, error } = await supabase
@@ -152,6 +158,13 @@ export async function getExplorePlaces(): Promise<ExplorePlace[]> {
 export async function getPlaceDetailById(
   id: string,
 ): Promise<PlaceDetailModel | null> {
+  if (!isSupabaseConfigured) {
+    try {
+      return getPlaceDetail(id)
+    } catch {
+      return null
+    }
+  }
   try {
     const supabase = createServerClient()
     const { data: place, error: placeError } = await supabase
@@ -266,6 +279,9 @@ export async function getPlaceDetailById(
  * các địa điểm khác sẽ được Next.js render theo nhu cầu khi có request (dynamicParams = true).
  */
 export async function getAllPlaceIdsFromDb(): Promise<string[]> {
+  if (!isSupabaseConfigured) {
+    return ["sakura-restaurant", "luna-cafe", "bui-vien", "riverside-garden"]
+  }
   try {
     const supabase = createServerClient()
     const { data } = await supabase
@@ -300,6 +316,9 @@ export async function getRelatedPlaces(
   },
   limit: number = 3,
 ): Promise<ExplorePlace[]> {
+  if (!isSupabaseConfigured) {
+    return getStaticRelatedPlaces(place.id, limit)
+  }
   try {
     const supabase = createServerClient()
 
